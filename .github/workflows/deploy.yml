@@ -12,7 +12,6 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           cd ${{ github.workspace }}
-          ls
           mkdir download
           cd download
           git clone -b master https://github.com/mingriyingying/zjc_notes.git
@@ -21,6 +20,7 @@ jobs:
           ls
           cp -r zjcdoc/articles/* zjc_notes/docs/articles/
           cd zjc_notes
+          ls
 
       - uses: actions/setup-node@v3
         with:
