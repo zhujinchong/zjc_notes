@@ -20,8 +20,9 @@ jobs:
           ls
           cp -r zjcdoc/articles/* zjc_notes/docs/articles/
           cd zjc_notes
+          pwd
           ls
-
+          
       - uses: actions/setup-node@v3
         with:
           node-version: 16
