@@ -9,24 +9,21 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: |
-          cd ${{ github.workspace }}
-          mv zjc_notes zjcdoc
-          # git clone -b master https://github.com/mingriyingying/zjc_notes.git
-          git clone -b vitepress https://github.com/mingriyingying/zjc_notes.git
-          cp -r zjcdoc/articles/* zjc_notes/docs/articles/
-          pwd
-          ls
-          
       - uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: yarn
-      - run: yarn install --frozen-lockfile
-
-      - name: Build
-        run: yarn build
+      - run: |
+          cd ${{ github.workspace }}
+          mkdir download
+          cd download
+          git clone -b master https://github.com/mingriyingying/zjc_notes.git
+          mv zjc_notes zjcdoc
+          git clone -b vitepress https://github.com/mingriyingying/zjc_notes.git
+          cp -r zjcdoc/articles/* zjc_notes/docs/articles/
+          cd zjc_notes
+          yarn install --frozen-lockfile
+          yarn build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
