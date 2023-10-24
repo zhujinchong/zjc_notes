@@ -1,0 +1,38 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          cd ${{ github.workspace }}
+          ls
+          mkdir download
+          cd download
+          git clone -b master https://github.com/mingriyingying/zjc_notes.git
+          mv zjc_notes zjcdoc
+          git clone -b vitepress https://github.com/mingriyingying/zjc_notes.git
+          ls
+          cp -r zjcdoc/articles/* zjc_notes/docs/articles/
+          cd zjc_notes
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/.vitepress/dist
