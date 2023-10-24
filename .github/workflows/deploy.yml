@@ -9,6 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Push to another repository
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
