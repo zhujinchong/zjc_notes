@@ -1,22 +1,30 @@
-name: Push to Another Repository
+name: Deploy
 
-# 触发条件，可根据需要进行调整
 on:
- push:
-   branches:
-     - master
+  push:
+    branches:
+      - master
 
 jobs:
- build:
-   runs-on: ubuntu-latest
-
-   steps:
-     - name: Checkout code
-       uses: actions/checkout@v3
-
-     - name: Push to another repository
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push to another repository
        env:
-         ACCESS_TOKEN: ${{ secrets.PUSH_DOC_TOKEN }}
+         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
        run: |
-         git remote add target https://github.com/mingriyingying/mingriyingying.github.io.git
-         git push target doc
+          cd ${{ github.workspace }}
+          mkdir download
+          cd download
+          git clone -b master https://github.com/mingriyingying/zjc_notes.git
+          cd zjc_notes/
+          git init
+          git add .
+          git commit -m "Add GitHub Actions workflow"
+          git remote add origin https://github.com/mingriyingying/mingriyingying.github.io.git
+          git push origin doc
+
+
+
+
+
