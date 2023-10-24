@@ -19,4 +19,4 @@ jobs:
          ACCESS_TOKEN: ${{ secrets.PUSH_DOC_TOKEN }}
        run: |
          git remote add target https://github.com/mingriyingying/mingriyingying.github.io.git
-         git push target doc
+         git push target master:doc
