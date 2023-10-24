@@ -27,10 +27,10 @@ jobs:
         with:
           node-version: 16
           cache: yarn
-      - run: yarn install --frozen-lockfile
-
-      - name: Build
-        run: yarn build
+      - run: |
+          cd download/zjc_notes
+          yarn install --frozen-lockfile
+          yarn build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
