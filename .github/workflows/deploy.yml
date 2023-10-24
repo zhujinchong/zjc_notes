@@ -15,4 +15,4 @@ jobs:
         REPO: git@github.com:mingriyingying/mingriyingying.github.io.git
         BRANCH: doc
         FOLDER: aritcles
-        SSH_PRIVATE_KEY: ${{ secrets.PUSH_DOC_TOKEN }}
+        SSH_PRIVATE_KEY: ${{ secrets.sinovatio-thinkpad-x270 }}
