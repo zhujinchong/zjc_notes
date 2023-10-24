@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Push to another repository
-       env:
-         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-       run: |
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: |
           cd ${{ github.workspace }}
           mkdir download
           cd download
