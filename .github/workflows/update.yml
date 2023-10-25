@@ -14,7 +14,7 @@ jobs:
         with:
           script: |
             const response = await github.repos.createDispatchEvent({
-              owner: 'mingriyingying',
+              owner: 'https://github.com/mingriyingying',
               repo: 'mingriyingying.github.io',
               event_type: 'update-event',
               client_payload: {}
