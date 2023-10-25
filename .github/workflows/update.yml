@@ -1,0 +1,24 @@
+name: Trigger Update Event
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger-event:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch Update Event
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const response = await github.repos.createDispatchEvent({
+              owner: 'mingriyingying',
+              repo: 'mingriyingying.github.io',
+              event_type: 'update-event',
+              client_payload: {}
+            });
+            console.log(response);
+        env:
+          GITHUB_TOKEN: ${{ secrets.UPDATE_EVENT }}
