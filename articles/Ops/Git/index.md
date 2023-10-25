@@ -138,7 +138,7 @@ SSH协议传输更快，但是有的公司不支持：
 
 4. 如果pull失败，说明本地dev和远程dev没有关联，建立链接：
 
-    `git branch --set-upstream-to=origin/dev dev`
+   `git branch --set-upstream-to=origin/dev dev`
 
 5. 再pull：`git pull`，pull成功，但是和本地合并冲突，打开文件修改冲突。
 

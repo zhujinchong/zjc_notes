@@ -987,9 +987,9 @@ docker-compose stop      # 停止服务
 
 * 轻量级：Portainer
 * 重量级：CAdvisor监控收集数据+InfluxDB存储数据+Granfana展示图标
-    * CAdvisor：容器资源监控工具，包括CUP、磁盘、网络、内存等。默认存储2分钟。
-    * InfluxDB：开源分布式时序、事件和指标数据库，无需外部依赖。
-    * Granfana：开源可视化平台，支持多种数据源：InfluxDB, MySQL, ES等。
+  * CAdvisor：容器资源监控工具，包括CUP、磁盘、网络、内存等。默认存储2分钟。
+  * InfluxDB：开源分布式时序、事件和指标数据库，无需外部依赖。
+  * Granfana：开源可视化平台，支持多种数据源：InfluxDB, MySQL, ES等。
 
 其中CIG三剑客可以直接docker编排安装。略。
 
