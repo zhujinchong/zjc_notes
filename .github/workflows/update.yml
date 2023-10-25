@@ -3,7 +3,7 @@ name: Trigger Update Event
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   trigger-event:
