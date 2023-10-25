@@ -6,19 +6,12 @@ on:
       - master
 
 jobs:
-  trigger-event:
+  trigger-webhook:
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch Update Event
-        uses: actions/github-script@v5
-        with:
-          script: |
-            const response = await github.repos.createDispatchEvent({
-              owner: 'https://github.com/mingriyingying',
-              repo: 'mingriyingying.github.io',
-              event_type: 'update-event',
-              client_payload: {}
-            });
-            console.log(response);
-        env:
-          GITHUB_TOKEN: ${{ secrets.UPDATE_EVENT }}
+      - name: Trigger Repository B Workflow
+        run: |
+          curl -X POST https://api.github.com/repos/mingriyingying/mingriyingying.github.io/dispatches \
+          -H "Authorization: token ${{ secrets.UPDATE_EVENT }}" \
+          -H "Accept: application/vnd.github.everest-preview+json" \
+          -d '{"event_type": "update-event"}'
