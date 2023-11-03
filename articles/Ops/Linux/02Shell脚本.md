@@ -305,3 +305,24 @@ sed 对数据查找和替换
 awk 把文件分成列
 split  对文件分割（分成小份）
 ```
+
+# 启动脚本
+
+启动
+
+```
+#!/bin/sh
+
+PORT=8300
+nohup java xxx.jar --port=$PORT > /dev/null 2>&1 &
+echo "$!" > pid
+```
+
+停止
+
+```
+#!/bin/sh
+
+kill -9 `cat pid`
+```
+
