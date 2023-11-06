@@ -36,6 +36,63 @@
 
 
 
+# Agent本质
+
+![img](images/v2-e6f1587c8fdb7c78eaf479aa96a40d5b_720w.webp)
+
+本质上就是写prompt，让模型仿照你的方式来进行执行的一种应用范式，prompt里面包含一些tools的描述，然后我们可以根据模型的输出使用一些外部tools(例如计算器，搜索API，数据库，程序接口，各种模型的API)
+
+目前有两种类型的Agents：
+
+- Action agents: 在每个时间步长，使用所有先前操作的输出来决定下一个操作.
+- Plan-and-execute agents：预先决定完整的行动顺序，然后在不更新计划的情况下全部执行。
+
+Action Agents适合小型的任务，而plan-and-execute agents更适合需要保持长期目标的复杂任务，通常最好的方法是通过让plan-and-execute agent使用action agents来执行计划，将action agents的动态性与plan-and-execute agent的计划能力相结合。
+
+# Agent类型
+
+![img](images/agent-overview.png)
+
+一个Agent的基本组成应该包含如下四个方面**规划**（planning), **工具**（Tools), **执行**(Action), 和**记忆**(Memory)。
+
+Agent Planning是Agent能力的核心，一个好的规划决定了agent能否顺利执行以及解决问题，规划简单来说就是**任务分解(Task Decomposition)**; 把复杂的问题划分成可以一步步解决的小步骤，以及不断根据**反馈(feedback)**去重新调整策略。
+
+## Chain of thought
+
+**Chain-of-Thought**是常见用来引导模型进行任务分解的大模型**提示(prompting)**方法，其主要方法就是提供任务分解的**少量示例(few-shot examples)**，利用大模型的**上下文学习能力(In-context learning)**去模仿进行类似的任务分解和规划。
+
+## Self-ask
+
+提出self ask方式的论文 [Measuring and Narrowing the Compositionality Gap in Language Model](https://link.zhihu.com/?target=https%3A//arxiv.org/abs/2210.03350) ，作者的英文介绍文 [Self-ask Prompting](https://link.zhihu.com/?target=https%3A//ofir.io/Self-ask-prompting/) 。
+
+![image-20231106162618860](images/image-20231106162618860.png)
+
+主要思路：引导LLM将一个复杂的问题拆分为简单的问题，逐个回答，然后汇总成为答案。
+
+实施细节：
+
+1、如上图，白色背景的是prompt，绿色背景的文本是LM的输出，下划线的是inference-time的问题。通过上文样本提示LLM输出Follow-up和immediate answer步骤。
+
+2、拆分出的子问题，不依赖LLM自己进行回答，而是调用外部搜索工具进行回答。并把结果交给LLM继续思考推理。
+
+## ReAct(Yao et al.)
+
+ReAct是 Reasoning + Acting的简写，提出的论文是 [ReAct: Synergizing Reasoning and Acting in Language Models](https://link.zhihu.com/?target=https%3A//arxiv.org/abs/2210.03629) ，一个结合Langchain的详细介绍可以见 [https://tsmatz.wordpress.com/2023/03/07/react-with-openai-gpt-and-langchain/](https://link.zhihu.com/?target=https%3A//tsmatz.wordpress.com/2023/03/07/react-with-openai-gpt-and-langchain/) 。
+
+ReAct也是引导LLM将复杂的问题解决过程拆解为简单的步骤，差异是：ReAct每次让LLM输出一个当前的【思考】和【要做的动作】，这个动作并不只限于检索信息，可以是调用任何工具。
+
+![image-20231106164821605](images/image-20231106164821605.png)
+
+这样ReAct引入了外部工具的概念，让LLM能够通过这种步进式的方式逐步思考并调用外部工具，根绝外部工具的结果进一步思考循环。同时也可以仅仅是输出一步思考，并继续下去，类似CoT。
+
+这个过程仍然是靠few-shot的方式给例子，引导LLM类似的“思考”，并按格式返回后续步骤的信息。（上图没给few-shot，Langchain中用的是Few-shot方式）
+
+## ReWoo(Binfeng Xu et al.)
+
+![img](images/v2-4a60a387bb03f16d4aa51975a855dde1_1440w.webp)
+
+**ReWOO**是类似在ReACT架构基础上，去掉了观察（observation)这个模块，取而代之的是把整个planning过程划分成**'Planner', 'Worker'**和**'Slover**'分别去进行规划、执行和总结三个部分，在API消耗和精度上都有所提升。
+
 # 几个重要的Agent
 
 ## AutoGPT
@@ -64,8 +121,6 @@ AutoGPT的网页版本——AgentGPT，仅需给定大模型的API即可实现�
 
 基于人工智能的任务管理系统。该系统使用OpenAI和Pinecone API来创建、优先排序和执行任务。该系统的主要思想是根据先前任务的结果和预定义的目标创建任务。
 
-
-
 # 其他Agent
 
 ## Qwen Agent
@@ -85,12 +140,4 @@ AutoGPT的网页版本——AgentGPT，仅需给定大模型的API即可实现�
 
 
 
-
-# 智能体
-
-ReAct
-
-AutoGPT
-
-ReWoo
 
