@@ -193,3 +193,31 @@ git config --global alias.lg "log --graph --pretty=oneline --abbrev-commit"
 2. 忽略特殊文件（避免上传特殊文件）
 3. 搭建Git服务器
 4. SourceTree可视化工具
+
+# 大文件下载
+
+Git LFS:（Large File Storage，解决git大文件存储问题）把音乐、图片、视频等指定的任意文件存在 Git 仓库之外，而在 Git 仓库中用一个占用空间 1KB 不到的文本指针来代替文件的存在,通过把大文件存储在 Git 仓库之外，可以减小 Git 仓库本身的体积，使克隆 Git 仓库的速度加快，也使得 Git 不会因为仓库中充满大文件而损失性能。
+安装
+
+```
+git lfs install
+```
+
+下载huggingface文件（这种方式没有进度）
+
+```
+git clone https://huggingface.co/bigscience/bloom-7b1
+```
+
+推荐用这种方式下载
+
+```
+git lfs clone https://huggingface.co/bigscience/bloom-7b1
+```
+
+如果中断，可以用这种方式继续
+
+```
+git lfs fetch
+```
+

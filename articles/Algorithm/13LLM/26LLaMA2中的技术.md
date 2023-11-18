@@ -111,7 +111,11 @@ LLaMA在 Attention Layer和MLP的输入上使用了RMSNorm，相比在输出上�
 
 ## RoPE
 
+参考：
+
 https://blog.csdn.net/weixin_44826203/article/details/129255185
+
+https://zhuanlan.zhihu.com/p/647109286
 
 ## SwiGLU
 

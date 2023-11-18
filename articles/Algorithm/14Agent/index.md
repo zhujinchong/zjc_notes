@@ -49,6 +49,8 @@
 
 Action Agents适合小型的任务，而plan-and-execute agents更适合需要保持长期目标的复杂任务，通常最好的方法是通过让plan-and-execute agent使用action agents来执行计划，将action agents的动态性与plan-and-execute agent的计划能力相结合。
 
+
+
 # Agent类型
 
 ![img](images/agent-overview.png)
@@ -59,7 +61,9 @@ Agent Planning是Agent能力的核心，一个好的规划决定了agent能否�
 
 ## Chain of thought
 
-**Chain-of-Thought**是常见用来引导模型进行任务分解的大模型**提示(prompting)**方法，其主要方法就是提供任务分解的**少量示例(few-shot examples)**，利用大模型的**上下文学习能力(In-context learning)**去模仿进行类似的任务分解和规划。
+**Chain-of-Thought**是常见用来引导模型进行任务分解的大模型**提示(prompting)**方法，其主要方法就是提供任务分解的**少量示例(few-shot examples)**，利用大模型的**上下文学习能力(In-context learning)**去模仿进行类似的**任务分解和规划**。
+
+chain of tree也是用于任务分解和规划。
 
 ## Self-ask
 

@@ -162,3 +162,39 @@ You should only respond in JSON format as described below
 Make sure that the response content you return is all in JSON format and does not contain any extra content.
 ```
 
+
+
+# 知识点总结
+
+## 计算效率Flash Attention
+
+Transformer的自注意力机制(self-attention)的计算的时间复杂度和空间复杂度都与序列长度有关，时间复杂度是 O(n2) ，所以在处理长序列的时候会变的更慢，同时内存会增长更多。通常的优化是针对计算复杂度(通过F L O P s FLOPsFLOPs 数衡量), 优化会权衡模型质量和计算速度。
+
+在FlashAttention中考虑到attention算法也是IO敏感的，通过对GPU显存访问的改进来对attention算法的实现进行优化。在GPU中片上存储SRAM访问速度最快，对应的HBM(high bandwidth memory)访问速度较慢，为了加速要尽量减少HBM的访问次数。
+
+标准的attention算法实现中的QKV都是与HBM交互的，具体如下：
+
+![img](images/v2-203a883e0a83cb0a568ff41214f58f87_720w.webp)
+
+FlashAttention算法实现的关键三点：
+
+1. softmax的tiling展开，可以支持softmax的拆分并行计算，从而提升计算效率
+2. 反向过程中的重计算，减少大量的显存占用，节省显存开销。
+3. 通过CUDA编程实现fusion kernel
+
+
+
+## 扩展上下文
+
+Qwen模型利用了简单地非训练计算，在推理过程中扩展上下文长度。
+
+在这项工作中，我们实现了简单的免训练技术，这些技术仅在推理过程中应用，以扩展模型的上下文长度。
+
+- 动态NTK感知插值，即对序列长度的增加动态缩放位置信息。https://zhuanlan.zhihu.com/p/648701937
+- LogN-Scaling，根据上下文长度与训练长度的比率，对Q和V的点积进行重新缩放，确保注意力值的熵随着上下文长度的增长而保持稳定。
+- Window attention，将注意力限制在一个上下文窗口内，防止模型关注到太远的内容。并在不同层采用不同的窗口大小，较低的层使用较短的窗口，而较高的层使用较长的窗口。
+
+通过arXiv数据集上的语言模型实验，我们的原生长度为2K的Qwen-7B/14B在8K的序列长度下依然表现不错，而原生长度扩展到8K的Qwen-7B能够在32K长序列的设置下取得不错的表现。
+
+![image-20231107103303360](images/image-20231107103303360.png)
+
