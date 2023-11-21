@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Trigger Repository B Workflow
         run: |
-          curl -X POST https://api.github.com/repos/mingriyingying/mingriyingying.github.io/dispatches \
+          curl -X POST https://api.github.com/repos/zhujinchong/zhujinchong.github.io/dispatches \
           -H "Authorization: token ${{ secrets.UPDATE_EVENT }}" \
           -H "Accept: application/vnd.github.everest-preview+json" \
           -d '{"event_type": "update-event"}'
