@@ -49,9 +49,24 @@ libreoffice --version
 libreoffice --headless --convert-to pdf --outdir /your/output/dir /your/doc_docx_wps/files/*.{dosx,doc,wps}
 ```
 
+单个文件
+
+```
+libreoffice --headless --convert-to pdf path-to-your-doc.doc
+```
+
+用python脚本执行
+
+```
+import os
+os.system("libreoffice --headless --convert-to txt path-to-your-doc.doc")
+```
+
 
 
 # pdf转docx
+
+在linux和window下都支持pdf2docx。
 
 安装
 
@@ -96,3 +111,8 @@ pip install pdfplumber
 ```
 pip install python-docx
 ```
+
+
+
+
+

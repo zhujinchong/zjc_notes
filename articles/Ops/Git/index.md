@@ -203,13 +203,13 @@ Git LFS:（Large File Storage，解决git大文件存储问题）把音乐、图
 git lfs install
 ```
 
-下载huggingface文件（这种方式没有进度）
+第一种方式：下载huggingface文件（这种方式没有进度）
 
 ```
 git clone https://huggingface.co/bigscience/bloom-7b1
 ```
 
-推荐用这种方式下载
+第二种方式：推荐用这种方式下载
 
 ```
 git lfs clone https://huggingface.co/bigscience/bloom-7b1
@@ -219,5 +219,13 @@ git lfs clone https://huggingface.co/bigscience/bloom-7b1
 
 ```
 git lfs fetch
+```
+
+第三种方式：
+
+只下载小文件，大文件手动下载。（文件多了不推荐，因为几兆的文件也不下载！）
+
+```
+GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/bigscience/bloom-7b1
 ```
 
