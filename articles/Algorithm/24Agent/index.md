@@ -125,6 +125,8 @@ AutoGPT的网页版本——AgentGPT，仅需给定大模型的API即可实现�
 
 基于人工智能的任务管理系统。该系统使用OpenAI和Pinecone API来创建、优先排序和执行任务。该系统的主要思想是根据先前任务的结果和预定义的目标创建任务。
 
+
+
 # 其他Agent
 
 ## Qwen Agent
