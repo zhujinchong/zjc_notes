@@ -14,9 +14,7 @@ whisper
 
 文字到声音：xtts_v2
 
-音色克隆：so-vits-svc
-
-
+音色克隆：so-vits-svc、rvc
 
 产品：11Labs
 
