@@ -64,6 +64,30 @@ os.system("libreoffice --headless --convert-to txt path-to-your-doc.doc")
 
 
 
+# linux下doc docx互站，转pdf
+
+上次发现有一个doc文件libreoffice识别不了，pandoc也识别不了。
+
+最后用一款商业软件aspose解决了。
+
+下载（从PyPI下载whl解决）
+
+```
+pip install aspose-words
+```
+
+使用：有水印！！
+
+```
+import aspose.words as aw
+from aspose.words import Document
+
+doc = aw.Document("00.doc")
+doc.save("output.docx", aw.SaveFormat.DOCX)
+```
+
+
+
 # pdf转docx
 
 在linux和window下都支持pdf2docx。
@@ -106,13 +130,85 @@ pip install pdfplumber
 
 # 解析docx
 
-安装
+安装（很好用，推荐）
 
 ```
 pip install python-docx
 ```
 
+遍历文本、图片、表格
 
+```
+import docx
+from docx.document import Document
+from docx.oxml.table import CT_Tbl
+from docx.oxml.text.paragraph import CT_P
+from docx.parts.image import ImagePart
+from docx.table import Table, _Cell
+from docx.text.paragraph import Paragraph
+import io
+
+
+# 该行只能有一个图片
+def is_image(graph: Paragraph, doc: Document):
+    images = graph._element.xpath('.//pic:pic')  # 获取所有图片
+    print(images)
+    for image in images:
+        for img_id in image.xpath('.//a:blip/@r:embed'):  # 获取图片id
+            part = doc.part.related_parts[img_id]  # 根据图片id获取对应的图片
+            if isinstance(part, ImagePart):
+                return True
+    return False
+
+
+# 获取图片（该行只能有一个图片）
+def get_ImagePart(graph: Paragraph, doc: Document):
+    images = graph._element.xpath('.//pic:pic')  # 获取所有图片
+    for image in images:
+        for img_id in image.xpath('.//a:blip/@r:embed'):  # 获取图片id
+            part = doc.part.related_parts[img_id]  # 根据图片id获取对应的图片
+            if isinstance(part, ImagePart):
+                return part
+    return None
+
+
+def iter_block_items(parent):
+    if isinstance(parent, Document):
+        parent_elm = parent.element.body
+    elif isinstance(parent, _Cell):
+        parent_elm = parent._tc
+    else:
+        raise ValueError("something's not right")
+
+    for child in parent_elm.iterchildren():
+        if isinstance(child, CT_P):
+            paragraph = Paragraph(child, parent)
+            if is_image(paragraph, parent):
+                yield get_ImagePart(paragraph, parent)
+            else:
+                yield Paragraph(child, Paragraph)
+        elif isinstance(child, CT_Tbl):
+            yield Table(child, Table)
+
+
+doc = docx.Document("00.docx")
+for part in iter_block_items(doc):
+    if isinstance(part, Paragraph):
+        _ctx = part.text.strip()
+        print(_ctx)
+    elif isinstance(part, Table):
+        table_ctx = []
+        for row in part.rows:
+            for cell in row.cells:
+                _ctx = cell.text.strip()
+                table_ctx.append(_ctx)
+        print(table_ctx)
+    elif isinstance(part, ImagePart):
+        io_file = io.BytesIO(part.blob)
+        # tmp = ocr_img_io(io_file)
+        print('img')
+
+```
 
 
 
