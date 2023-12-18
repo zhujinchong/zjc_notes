@@ -168,24 +168,6 @@ Make sure that the response content you return is all in JSON format and does no
 
 # 知识点总结
 
-## 计算效率Flash Attention
-
-Transformer的自注意力机制(self-attention)的计算的时间复杂度和空间复杂度都与序列长度有关，时间复杂度是 O(n2) ，所以在处理长序列的时候会变的更慢，同时内存会增长更多。通常的优化是针对计算复杂度(通过F L O P s FLOPsFLOPs 数衡量), 优化会权衡模型质量和计算速度。
-
-在FlashAttention中考虑到attention算法也是IO敏感的，通过对GPU显存访问的改进来对attention算法的实现进行优化。在GPU中片上存储SRAM访问速度最快，对应的HBM(high bandwidth memory)访问速度较慢，为了加速要尽量减少HBM的访问次数。
-
-标准的attention算法实现中的QKV都是与HBM交互的，具体如下：
-
-![img](images/v2-203a883e0a83cb0a568ff41214f58f87_720w.webp)
-
-FlashAttention算法实现的关键三点：
-
-1. softmax的tiling展开，可以支持softmax的拆分并行计算，从而提升计算效率
-2. 反向过程中的重计算，减少大量的显存占用，节省显存开销。
-3. 通过CUDA编程实现fusion kernel
-
-
-
 ## 扩展上下文
 
 Qwen模型利用了简单地非训练计算，在推理过程中扩展上下文长度。
@@ -199,4 +181,20 @@ Qwen模型利用了简单地非训练计算，在推理过程中扩展上下文�
 通过arXiv数据集上的语言模型实验，我们的原生长度为2K的Qwen-7B/14B在8K的序列长度下依然表现不错，而原生长度扩展到8K的Qwen-7B能够在32K长序列的设置下取得不错的表现。
 
 ![image-20231107103303360](images/image-20231107103303360.png)
+
+
+
+## 直接外推 与 线性内插
+
+ 如果 大语言模型 在训练阶段文本的最大长度是 2048, 而下游任务的文本长度可以达到 4096, 此时应该怎么处理?
+
+初步感觉, 这对于 RoPE 来说并不是一个大问题。直接用原公式，直接外推。
+
+![image-20231218150219940](images/image-20231218150219940.png)
+
+![image-20231218151448113](images/image-20231218151448113.png)
+
+实验发现, 如果这样做, 性能会下降特别多。
+
+**相对位置** 和 **注意力分数** 之间是震荡递减的关系，当 **相对位置** 超过一万时, 震荡递减关系就不存在了。
 
