@@ -46,3 +46,10 @@ https://github.com/open-compass/MixtralKit/blob/main/README_zh-CN.md#-%E6%A8%A1%
 
 ![image-20231212114618463](images/image-20231212114618463.png)
 
+
+
+参考：
+
+https://mp.weixin.qq.com/s/p6yo_0VIGHUBnGoTnFid4Q
+
+https://mp.weixin.qq.com/s/fQ0xj8oaAtp6dI5tYuG02w

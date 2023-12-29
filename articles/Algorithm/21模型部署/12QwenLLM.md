@@ -1,20 +1,21 @@
+# vLLM部署
+
+参数
+
+```
+--dtypefloat16 bfloat16
+--max-model-len		模型支持的最大token数。一般在模型的config.json配置文件中有默认最大长度的配置。
+--tensor-parallel-size  张量并行的数量
+--pipeline-parallel-size 流水线并行的数量
+
+--max-num-batched-tokens 每次迭代的batched的最大token数 None
+--max-num-seqs 每次迭代的最大序列数 256
+--max-paddings batch的最大填充数 256
+```
 
 
-# 如何加速
 
-1、batch推理
+# S-LoRA部署
 
-2、flash-attention（fp16或bf16）
-
-2、kv cache缓存
-
-3、模型量化：用AutoGPTQ技术，得到BF16, Int8和Int4模型
-
-4、多卡推理：vLLM和FastChat
-
-
-
-注意：KV Cache和FlashAttention不能同时用，同时开启时，FlashAttention关闭。
-
-推荐：KV
+https://github.com/S-LoRA/S-LoRA
 

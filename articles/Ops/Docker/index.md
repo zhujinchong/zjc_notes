@@ -71,6 +71,107 @@ systemctl restart docker
 
 
 
+## 附加：离线安装docker
+
+离线包下载地址：https://download.docker.com/linux/static/stable/x86_64/
+
+安装步骤：
+
+```
+tar -zxvf docker-20.10.9.tgz 
+cp docker/* /usr/bin
+# rm -rf docker docker-20.10.9.tgz
+```
+
+配置docker服务
+
+```
+# vim /etc/systemd/system/docker.service
+# 添加
+[Unit]
+
+Description=Docker Application Container Engine
+
+Documentation=https://docs.docker.com
+
+After=network-online.target firewalld.service
+
+Wants=network-online.target
+
+
+[Service]
+
+Type=notify
+
+ExecStart=/usr/bin/dockerd
+
+ExecReload=/bin/kill -s HUP $MAINPID
+
+LimitNOFILE=infinity
+
+LimitNPROC=infinity
+
+TimeoutStartSec=0
+
+Delegate=yes
+
+KillMode=process
+
+Restart=on-failure
+
+StartLimitBurst=3
+
+StartLimitInterval=60s
+
+
+[Install]
+
+WantedBy=multi-user.target
+```
+
+赋执行权限
+
+```
+chmod +x /etc/systemd/system/docker.service
+systemctl daemon-reload
+
+# 开机启动
+systemctl enable docker.service
+# 启动docker
+systemctl start docker
+# docker状态
+systemctl status docker
+# 重启docker服务
+systemctl restart docker
+```
+
+## 附加：离线安装nvidia-docker-runtime
+
+通过nvidia-docker-runtime，可以实现在docker容器内部使用nvidia的gpu 进行相关的模型训练和推理。
+
+如命令
+
+```
+docker run --gpus "device=1,2"
+docker run --gpus all
+```
+
+官方没有直接提供安装包，需要自己从linux仓库下载，或找别人下载好的安装包。
+
+```
+#解压nvidia-container-runtime.tar.gz
+tar -zxvf nvidia-container-runtime.tar.gz
+#离线安装所有rpm包
+cd nvidia-container-runtime
+rpm -Uvh --force --nodeps *.rpm
+#安装完后需要重启容器，未设置为系统启动服务，也可以通过kill docker进程再启动方式重启
+systemctl restart docker
+#查看安装结果
+whereis  nvidia-container-runtime 
+```
+
+
+
 # 2  Docker命令
 
 ## 2.1  Docker服务命令
