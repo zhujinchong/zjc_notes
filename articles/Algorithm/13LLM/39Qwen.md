@@ -194,17 +194,51 @@ Qwen模型利用了简单地非训练计算，在推理过程中扩展上下文�
 
 ![image-20231218151448113](images/image-20231218151448113.png)
 
-实验发现, 如果这样做, 性能会下降特别多。
+**相对位置** 和 **注意力分数** 之间是震荡递减的关系，当 **相对位置** 超过一万时, 震荡递减关系就不存在了。
 
-**相对位置** 和 **注意力分数** 之间是震荡递减的关系，当 **相对位置** 超过一万时, 震荡递减关系就不存在了。https://zhuanlan.zhihu.com/p/662790439
+我们将 d 的值设置为 8, 可以发现, 两者之间还是 周期函数, 周期大概在 10000 左右, 这符合我们对三角函数的认知。也就是说, 图一到图三中呈现的震荡递减关系只是因为 周期不够大! 初步估算, 当 d 的值为 32 时, 周期应该是 亿级别的, 因此正常完全够用。
 
+初步感觉, 直接外推对于 RoPE 来说并不是一个大问题。可是实验发现, 如果这样做, 性能会下降特别多。
 
+![image-20240102101458392](images/image-20240102101458392.png)
 
+怎么办呢? [国外网友 kaiokendev](https://link.zhihu.com/?target=https%3A//kaiokendev.github.io/til%23extending-context-to-8k) 和 [Meta](https://link.zhihu.com/?target=https%3A//arxiv.org/abs/2306.15595) 同时提出了一种方式: **线性内插** (Positional Interpolation)：
 
+![image-20240102101611298](images/image-20240102101611298.png)
+
+![image-20240102101717378](images/image-20240102101717378.png)
+
+## NTK-aware Scaled RoPE
+
+参考：https://zhuanlan.zhihu.com/p/662790439
+
+**线性内插** 虽然效果还可以, 但需要增量训练, 有没有办法在不需要增量训练的情况下实现长度外推呢? 于是, 有人想到, 对于向量 q 和 k, 靠前的维度 **直接外推**, 靠后的维度 **线性内插**:
+
+![image-20240102104003134](images/image-20240102104003134.png)
+
+这样的效果如何呢? 根据实验, 在不进行增量训练的情况下, **线性内插** 的性能下降了近 40%, 而这种方案的性能下降仅仅为 5%, 可以说效果非常好了。
+
+为什么叫这个名字，可能和作者的研究有关，略。
 
 ## dynamic_ntk
 
+接着, 有人提出更一般的形式:
+
+![image-20240102104403855](images/image-20240102104403855.png)
+
+其中，$\alpha$是一个超参数，设为2时，效果不错。
+
 ## window_attn
 
+参考：https://zhuanlan.zhihu.com/p/134748587
+
+Window attention，将注意力限制在一个上下文窗口内，防止模型关注到太远的内容。并在不同层采用不同的窗口大小，较低的层使用较短的窗口，而较高的层使用较长的窗口。
+
+具体用那种windown attention不知道。感觉像是sliding window attention
+
 ## LogN-Scaling
+
+论文：Overcoming a theoretical limitation of self-attention
+
+参考：https://zhuanlan.zhihu.com/p/673851074
 
