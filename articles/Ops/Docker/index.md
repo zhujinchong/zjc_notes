@@ -1096,3 +1096,32 @@ docker-compose stop      # 停止服务
 
 
 
+```
+{
+	"code": 200,  //状态码
+	"msg": "success，后台正在飞速上传文件，请耐心等待",  //提示信息
+	"data": [
+		{
+			"file_id": "1b6c0781fb9245b2973504cb031cc2f3",  //文件id
+			"file_name": "网易有道智云平台产品介绍2023.6.ppt",  //文件名
+			"status": "gray"  //文件状态（red：入库失败-切分失败，green，成功入库，yellow：入库失败-milvus失败，gray：正在入库）
+		},
+		{
+			"file_id": "aeaec708c7a34952b7de484fb3374f5d",
+			"file_name": "有道知识库问答产品介绍.pptx",
+			"status": "gray"
+		},
+		{
+			"file_id": "8ee98a88457c414a986a09c536fedde9",
+			"file_name": "韦小宝身份证.jpg",
+			"status": "gray"
+		},
+		{
+			"file_id": "67af479f907b497cadb30c6e4b2d3fbc",
+			"file_name": "成长中心-辅导老师日常问题文档.pdf",
+			"status": "gray"
+		}
+	]  //文件列表
+}
+```
+
