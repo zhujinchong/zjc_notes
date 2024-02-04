@@ -20,3 +20,9 @@ InstantID 是一个高效的、轻量级、可插拔的适配器，赋予预训�
 
 （3）提出 IdentityNet 来对人脸施加强语义和弱空间的条件控制，从而增强 ID 的保真度以及文本的控制力。
 
+
+
+# 四、AnyDoor
+
+https://mp.weixin.qq.com/s/vZAfcDlgCIi1B5gJNK8Vlg
+
