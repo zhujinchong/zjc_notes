@@ -76,33 +76,125 @@ embeddings: 是textual inversion方法的结果，和Hypernetworks方法一样�
 
 时间：2023-02
 
-
-
 ControlNet可以从提供的参考图中获取布局或者姿势等信息, 并引导diffusion model生成和参考图类似的图片。调整prompt确实是一件费时费力的事情，而有了ControlNet则可以精确的控制生成图片的细节(当然, 也依赖于你已经有一张参考图了)。
 
+为了能继承大模型的能力, ControlNet将原来大模型的参数分为两部分, 分别是**可训练**和**冻结**的。
 
-
-# 一、IP-Adapter
-
-# 二、PhotoMaker
-
-# 三、InstantID
-
-https://mp.weixin.qq.com/s/7d8En7idif4UFSGo_6MFsg
-
-主题驱动的文本到图像生成，通常需要在多张包含该主题（如人物、风格）的数据集上进行训练，这类方法中的代表工作包括 DreamBooth、Textual Inversion、LoRAs 等，但这类方案因为需要更新整个网络或较长时间的定制化训练，往往无法很有效地兼容社区已有的模型，并无法在真实场景中快速且低成本应用。而目前基于单张图片特征进行嵌入的方法（FaceStudio、PhotoMaker、IP-Adapter），要么需要对文生图模型的全参数训练或 PEFT 微调，影响原本模型的泛化性能，缺乏与社区预训练模型的兼容性，要么无法保持高保真度。
-
-InstantID 是一个高效的、轻量级、可插拔的适配器，赋予预训练的文本到图像扩散模型以 ID 保存的能力。作者通过:
-
-（1）将弱对齐的 CLIP 特征替换为强语义的人脸特征；
-
-（2）人脸图像的特征在 Cross-Attention 中作为 Image Prompt 嵌入；
-
-（3）提出 IdentityNet 来对人脸施加强语义和弱空间的条件控制，从而增强 ID 的保真度以及文本的控制力。
+![image-20240221222250014](images/image-20240221222250014.png)
 
 
 
-# 四、AnyDoor
+图(a)是之前stable diffusion的输出, 图(b)和图(a)的区别在于添加了ControlNet的结构, 具体而言是将`neural network block`复制了一份, 作为`trainable copy`,并且`neural network block`的网络参数会被冻结住。而且`trainable copy`前后会有`zero convolution`, `zero convolution`其实是1*1的卷积。最后会将`neural network block`和`trainable copy`的特征相加。
 
-https://mp.weixin.qq.com/s/vZAfcDlgCIi1B5gJNK8Vlg
+Before前模型是这样的：
+
+![image-20240221223350082](images/image-20240221223350082.png)
+
+After模型是这样的：
+
+![image-20240221223406879](images/image-20240221223406879.png)
+
+并且，训练前：
+
+![image-20240221223424633](images/image-20240221223424633.png)
+
+上一部分描述了ControlNet如何控制单个神经网络块，论文中作者是以Stable Diffusion为例子，讲了如何使用ControlNet对大型网络进行控制。灰色部分是原来stable diffusion的结构, 蓝色部分是从U-Net的encode对应部分copy, 经过`zero convolution`后和U-Net的decode相加。
+
+![image-20240221222703925](images/image-20240221222703925.png)
+
+
+
+虽然ControlNet新加了些模型结构, 但由于大部分参数都被冻结, 因此训练时实际上只用原来stable diffusion模型的23%显存和34%的训练时间, 可以在单张40GB的A100卡上做训练（50k数据）。
+
+# AnyDoor
+
+时间：2023-07
+
+机构：香港大学、阿里集团、蚂蚁集团联合开源
+
+AnyDoor实现了零样本的图像嵌入，主要功能是“图像传送”，点两下鼠标，就能把物体无缝「传送」到照片场景中，光线角度和透视也能自动适应。例如，将女生的蓝色短袖换成其他样式的红色衣服。
+
+![image-20240221231932278](images/image-20240221231932278.png)
+
+工作原理：
+
+首先采用分割模块从对象中删除背景，然后使用ID提取器获取其**ID Tokens**。然后，我们对“干净”的对象应用高通滤波器，将所得的高频图(HF-Map)与期望位置的场景拼接起来，并使用细节提取器以纹理细节补充ID提取器。最后，将**ID Tokens**和**Detail Maps**注入预训练的扩散模型。
+
+细节：
+
+1、ID Extractor使用自监督式的物体提取并转换成token，这一步使用的编码器是以目前最好的自监督模型DINO-V2为基础设计的。
+
+2、ID Extractor专注于细节提取；而"HF-Map"高频图侧重于全局信息。
+
+![image-20240221232216801](images/image-20240221232216801.png)
+
+
+
+# IP-Adapter
+
+时间：2023-08
+
+机构：腾讯
+
+“垫图”这个概念大家肯定都不陌生，此前当无法准确用prompt描述心中那副图时，最简单的办法就是找一张近似的，然后img2img流程启动，一切搞定。img2img有它绕不过去的局限性，比如对prompt的还原度不足、生成画面多样性弱，特别是当需要加入controlnet来进行多层控制时，参考图、模型、controlnet的搭配就需要精心挑选。
+
+如下图，img2img生成画面多样性弱：对参考图依赖强，对提示词依赖弱。
+
+![image-20240221224507338](images/image-20240221224507338.png)
+
+IP-Adapter （Image Prompt Adapter）基于解耦的交叉注意力机制，允许模型同时处理文本和图像信息，而不会互相干扰。
+
+![image-20240221225355096](images/image-20240221225355096.png)
+
+![image-20240221225702579](images/image-20240221225702579.png)
+
+# PhotoMaker
+
+时间：2023-12
+
+机构：腾讯
+
+特点：不用训练，就能复刻人脸（因为这里主要训练了人脸数据）。
+
+
+
+PhotoMaker 主要通过将任意数量的输入图像编码成堆叠的ID嵌入来保存信息。这种嵌入不仅可以全面封装人物特征，还可以容纳不同 ID 的特征以便后续集成。它的工作原理是从文本编码器和图像编码器分别获得来源，通过合并和提取相应类的ID嵌入。从而很好地生成统一ID的内容。简单来说，PhotoMaker能够在保留人物特征的情况下，轻松更换多种风格也不失真，同时，它还满足高质量输出，最终出来的效果相对好很多。
+
+![image-20240221230118794](images/image-20240221230118794.png)
+
+![image-20240221230138903](images/image-20240221230138903.png)
+
+在实现机制上，PhotoMaker先从文本和图像编码器中获取相应的嵌入，然后通过合并类别嵌入和图像嵌入来形成融合嵌入。这些嵌入最终被串联成堆叠ID嵌入，供后续的Diffusion Model生成图像使用。
+
+![image-20240221230326866](images/image-20240221230326866.png)
+
+# InstantID
+
+时间：2024-01
+
+机构：据说是小红书
+
+
+
+目前基于`diffusion model`做定制生成主要有两类方法：inference before fine-tune和inference without fine-tune。inference before fine-tune方法每次有新的概念都需要训练模型，相对繁琐，但效果较好，代表工作有`DreamBooth`, `lora`, `textual inversion`等。inference without fine-tune的方法需要预先在大量数据上训练一个鲁棒的object embedding提取模型，推理时无需再次训练，代表工作有`AnyDoor`， `IPAdapter`等。
+
+人脸的定制生成往往需要更加细粒度（fine-grain）的特征提取，现有的基于inference without fine-tune的方法做的都不是很好。本文提出了一种即插即用plug-and-play 定制人脸生成模型（Plugability），给定一张人脸照片，就能生成指定风格和pos的照片。InstantID不仅前期训练成本低（compatibility），还能实现inference without fine-tune （Tuning-free）和高保真图像的生成。（Superior performance）。取得了fidelity、efficiency、flexible三者很好的平衡。
+
+为了实现上述目的，设计了3个模块
+
+- `ID embedding`: 用于提取reference image的人脸特征。
+- `Adapted module`：用于将人脸特征融入到`diffusion model`中
+- `IdentityNet`：用于将人脸的spatial 信息融入到`diffusion model`中
+
+![image-20240221231219359](images/image-20240221231219359.png)
+
+三个模块的作用和原理：
+
+1、`ID embedding`：作者认为`CLIP`的训练用了大多数弱对齐的语料，这导致`CLIP` image encoder提取的特征来自广泛模糊的语义信息，对于ID级别的特征提取的粒度是不够的。因此作者此处用了人脸领域的预训练模型antelopev2提取Id embedding。
+
+2、`Adapted module`：这篇paper参考了`IP-Adapter`的方法，分别将image embedding和text embedding融入到decoupled cross-attention中。
+
+3、`IdentityNet`：`IdentityNet`的核心目的是给`diffusion model`增加spatial control的能力,来弥补损害的text edit能力。作者采用`Controlnet`的思路来实现`IdentityNet`。
+
+
 
