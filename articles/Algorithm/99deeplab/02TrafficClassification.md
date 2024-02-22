@@ -36,7 +36,7 @@
 
 ## 按数据分类
 
-流量的形式在网络传输中是二进制的比特流形式，主要构造单元有数据包和会话流。其中数据包为传输最小完整单元；会话流由通信的设备两端的一个完整交互单元，由多个数据包组成。有的论文会分为：Packet-Based、Flow-Based、Session-Based。Flow-Based只包含单向数据流，Session-Based是双向数据流。
+流量的形式在网络传输中是二进制的比特流形式，主要构造单元有数据包和会话流。其中数据包为传输最小完整单元（Packet-Based）；会话流由通信的设备两端的一个完整交互单元，由多个数据包组成（Flow-Based）。有的论文会分为：Packet-Based、Flow-Based、Session-Based。Flow-Based只包含单向数据流，Session-Based是双向数据流。
 
 
 
@@ -61,6 +61,12 @@ ET-BERT: 预训练是flow-based，微调flow-based, packet-based都可以！
  
 
 # 1D-CNN
+
+论文：End-to-end Encrypted Traffic Classification with  One-dimensional Convolution Neural Networks 
+
+时间：2017
+
+
 
 网络流量划分粒度：
 
@@ -104,21 +110,19 @@ ISCX-VPN-NonVPN-2016中的数据：
 
 ![img](images/wps2.jpg) 
 
-
-
-# FS-Net
-
-分类特征：Flow级的特征（特征是每个数据流的长度）
-
-数据集：自己收集的，不公开数据。
-
-实验结果+对比方法：
-
-![img](images/wps3.jpg) 
+ 
 
  
 
 # Deep-Packet 
+
+论文：Deep Packet: A Novel Approach For Encrypted Traffic Classification Using Deep Learning
+
+[Deep Packet: A Novel Approach For Encrypted Traffic Classification Using Deep Learning | Papers With Code](https://paperswithcode.com/paper/deep-packet-a-novel-approach-for-encrypted)
+
+时间：2018
+
+
 
 ![img](images/wps4.jpg)
 
@@ -144,9 +148,49 @@ ISCX-VPN-NonVPN-2016中的数据：
 
 8.针对样本不均衡问题，对样本更多的类进行欠采样，直到类相对平衡。
 
- 
+
+
+# FS-Net
+
+论文：FS-Net: A Flow Sequence Network For Encrypted Traffic Classification
+
+时间：2019
+
+
+
+分类特征：Flow级的特征（特征是每个数据流的长度）
+
+数据集：自己收集的，不公开数据。
+
+实验结果+对比方法：
+
+![img](images/wps3.jpg)
+
+
+
+# CNN+RNN+RF
+
+论文：Deep Learning for Network Traffic Classification
+
+[Deep Learning for Network Traffic Classification | Papers With Code](https://paperswithcode.com/paper/deep-learning-for-network-traffic)
+
+时间：2021
+
+方法：CNN+RNN+随机森林
+
+
+
+深度学习CNN+RNN：用包
+
+机器学习RF：用特征
+
+
 
 # ET-BERT
+
+论文：ET-BERT: A Contextualized Datagram Representation with Pre-training Transformers for Encrypted Traffic Classification
+
+时间：2022-02
 
 该方法主要分为三个部分：A. 预处理和编码加密流量为 token 组成的 BURST 结构，B. 预训练学习加密流量报文的关联关系，C. 将预训练模型应用到下游任务中微调。
 
@@ -155,6 +199,44 @@ BURST 结构：Flow-Based级别数据流，转成16进制后，4个一组作为t
 预训练：类似于BERT，通过掩码 BURST 预测任务（Masked BURST Model）和同源 BURST 预测任务（Same-origin BURST Prediction）学习。
 
 微调：包括包级别和流级别。
+
+
+
+# TFE-GNN 
+
+论文：
+
+时间：2023-07
+
+
+
+背景：
+
+1、ET-BERT只学习flow-level features，如果flows较短效果不好。
+
+2、本文提出byte-level流量图方法。
+
+# CLE-TFE
+
+论文：One Train for Two Tasks: An Encrypted Traffic Classification Framework Using Supervised Contrastive Learning
+
+时间：2024-02
+
+方法：对比学习+图神经网络
+
+
+
+背景：
+
+1、ET-BERT直接学习统计特征或原始字节的表示，没有考虑不同样本特征之间的潜在共性，因此不能充分揭示数据中包含的语义不变信息。
+
+2、对比学习更能学习到高层语义。
+
+
+
+
+
+
 
 
 

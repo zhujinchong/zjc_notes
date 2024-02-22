@@ -1,1 +1,0 @@
-# Magic-Me: Identity-Specific Video Customized Diffusion

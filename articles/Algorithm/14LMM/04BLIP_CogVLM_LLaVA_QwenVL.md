@@ -1,5 +1,3 @@
-CogVLM  InstructBLIP LLaVA MiniGPT4 QwenVL ShareGPT4V
-
 # BLIP
 
 **BLIP**(Bootstrapping Language-Image Pretraining)是**salesforce**在2022年提出的多模态框架，是理解和生成的统一，引入了跨模态的编码器和解码器，实现了跨模态信息流动，在多项视觉和语言任务取得SOTA。
@@ -7,6 +5,8 @@ CogVLM  InstructBLIP LLaVA MiniGPT4 QwenVL ShareGPT4V
 ## 模型结构
 
 **BLIP引入了编码器-解码器的多模态混合结构MED**（ Multimodal mixture of Encoder-Decoder）**，能够有效地进行多任务预学习和迁移学习。**MED包括两个单模态编码器（lmage Encoder，Text Encoder），一个以图像为基础的编码器（image-grounded text encoder）和一个以图像为基础的解码器（image-grounded text decoder）。
+
+# CogVLM  InstructBLIP LLaVA MiniGPT4 QwenVL ShareGPT4V
 
 
 
@@ -36,6 +36,10 @@ WORLD MODEL ON MILLION-LENGTH VIDEO AND LANGUAGE WITH RINGATTENTION
 
 # Sora
 
+![image-20240218091111643](images/image-20240218091111643.png)
+
+
+
 ## DALLE2
 
 ![img](images/bb954c923e34472a91b30fca8862f450.png)
@@ -49,6 +53,8 @@ WORLD MODEL ON MILLION-LENGTH VIDEO AND LANGUAGE WITH RINGATTENTION
 
 阶段二 decoder生成图：常规的扩散模型解码器，解码生成图像
 这里的decoder就是升级版的GLIDE(GLIDE基于扩散模型)，所以说DALL·E2 = CLIP + GLIDE
+
+
 
 ## ViT
 
@@ -77,6 +83,10 @@ OpenAI研究者首先将视频压缩到一个低维潜空间中，随后把这�
 因此，视频模型Sora是一个扩散模型；它能够接受带有噪声的patch（和条件信息，如文本提示）作为输入，随后被训练，来预测原始的「干净」patch。
 
 重要的是，Sora是基于Transformer的扩散模型。在以往，Transformer在语言模型、计算机视觉和图像生成等多个领域，都表现出卓越的扩展能力。
+
+
+
+
 
 # I-JEPA
 

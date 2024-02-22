@@ -8,9 +8,9 @@ Vid2DensePose 是一款功能强大的工具，旨在将 **DensePose** 模型应
 
 DensePose是Meta开源的项目，可以将 RGB 图像的所有人体像素映射到人体的 3D 表面。
 
+具体来说，DensePose 利用深度学习将 2D RPG 图像坐标映射到 3D 人体表面，把一个人分割成许多 UV 贴图（UV 坐标），然后处理密集坐标，实现动态人物的精确定位和姿态估计。
 
-
-# MagicAnimate 
+# Magic Animate 
 
 字节开源项目，它可以从单张图片和一个动作视频中生成动画视频。（多人也是可以的）
 
@@ -20,7 +20,7 @@ DensePose是Meta开源的项目，可以将 RGB 图像的所有人体像素映�
 
 
 
-# AnimateAnyone
+# Animate Anyone
 
 阿里项目，但是没有开源。被字节秒了！
 
@@ -30,3 +30,5 @@ DensePose是Meta开源的项目，可以将 RGB 图像的所有人体像素映�
 
 * pose guider进行动作的编码
 * 最后使用temperal layer进行时延的训练，使得最后的图像序列在时间上保证连续性
+
+# Magic-Me: Identity-Specific Video Customized Diffusion

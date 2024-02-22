@@ -232,6 +232,18 @@ pip -V
 
 
 
+**如何在PyCharm中显示conda虚拟环境？**
+
+Add Python Interpreter -> Add Local Python Interpreter -> Conda Environment -> Conda executable 选择 anaconda/Scripts/conda.exe即可。
+
+
+
+**如何在PyCharm中的Terminal中打开虚拟环境？**
+
+Settings -> Tools -> Terminal -> Shell Path 选择cmd即可。
+
+
+
 # PyTroch安装
 
 ## 什么是CUDA

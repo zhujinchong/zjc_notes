@@ -1,5 +1,3 @@
-https://zhuanlan.zhihu.com/p/678613724
-
 # Dreambooth
 
 2022-04
