@@ -6,7 +6,17 @@
 
 **BLIP引入了编码器-解码器的多模态混合结构MED**（ Multimodal mixture of Encoder-Decoder）**，能够有效地进行多任务预学习和迁移学习。**MED包括两个单模态编码器（lmage Encoder，Text Encoder），一个以图像为基础的编码器（image-grounded text encoder）和一个以图像为基础的解码器（image-grounded text decoder）。
 
-# CogVLM  InstructBLIP LLaVA MiniGPT4 QwenVL ShareGPT4V
+# CogVLM
+
+# InstructBLIP
+
+# LLaVA
+
+# MiniGPT4
+
+# QwenVL
+
+# ShareGPT4V
 
 
 
