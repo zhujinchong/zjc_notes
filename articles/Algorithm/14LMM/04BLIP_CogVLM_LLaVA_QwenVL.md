@@ -1,3 +1,5 @@
+![img](images/v2-a2c95e4dda40410872aba8ef15e4fff8_720w.webp)
+
 # BLIP
 
 **BLIP**(Bootstrapping Language-Image Pretraining)是**salesforce**在2022年提出的多模态框架，是理解和生成的统一，引入了跨模态的编码器和解码器，实现了跨模态信息流动，在多项视觉和语言任务取得SOTA。
