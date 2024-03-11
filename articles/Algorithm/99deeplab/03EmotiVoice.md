@@ -74,11 +74,11 @@ RVQ的具体做法是这样的：
 
 
 
-# VALL-E X
+# VALL-E
 
-Speak Foreign Languages with Your Own Voice: Cross-Lingual Neural Codec
+Neural Codec Language Models are Zero-Shot Text to Speech Synthesizers
 
-时间：2023-03-07
+时间：2023-01-05
 
 机构：微软
 
@@ -115,3 +115,61 @@ Speak Foreign Languages with Your Own Voice: Cross-Lingual Neural Codec
 ![img](images/v2-8b15803da4c7c0891fe0d10e7b21c6cb_720w.webp)
 
 图2所示的整体架构还是比较简洁明了的：文本提示词转换通过音素转换模块(phoneme conversion)变成音素送入模型，语音提示词(acoustic prompt)经过Encodec的Encoder变成离散的acoustic tokens送入模型，二者融合来预测后续可能出现的acoustic tokens，Encodec的Decoder将预测的acoustic tokens转换为声学波形。
+
+
+
+
+
+# VALL-E X
+
+Speak Foreign Languages with Your Own Voice: Cross-Lingual Neural Codec Language Modeling
+
+时间：2023-03-07
+
+机构：微软
+
+
+
+对 VALL-E 的扩展。它可以生成目标语言的高质量语音，同时保留看不见的说话者的声音、情感和声学环境。有效缓解了外国口音问题，可以通过语言ID来控制。
+
+![img](images/v2-05bbeb412f03015deb56383529ef3f33_720w.webp)
+
+
+
+## 模型架构
+
+![img](images/v2-dae15c46ad6eff6f0a1a8e312c8b4a6e_720w.webp)
+
+由一个自回归的多语音编码器和一个非自回归的编码器组成。
+多语言声学标记 (A) 和音素序列 (S) 分别使用编码器和 G2P 工具从语音和转录中转换而来。在训练期间，使用来自不同语言的配对 S 和 A 来优化这两个模型。本文中语义标记指音素序列。
+
+
+
+## 多语言训练
+
+利用了双语语音转录 (ASR) 语料库，成对的 (Ss, As) 和 (St, At) 来训练多语言模型。
+另外，利用语言 ID 来指导 VALL-E X 中特定语言的语音生成。因为是用多语言数据训练的，如果不指定ID，可能会混淆为特定语言选择合适的声学标记。例如汉语是声调语言，而英语是非声调语言。这在引导正确的说话风格和缓解口音问题方面出奇地有效，具体来说，将语言 ID 嵌入到密集向量中，并将它们添加到声学标记的嵌入中。
+
+## 多语言推理
+
+![img](images/v2-3746da7a1cf122205aef99d2ab4f1dbc_720w.webp)
+
+自回归和非自回归模型的输入不同；右侧显示了语音到语音翻译的过程。
+给定源语音 Xs，语音识别和翻译模型首先从语义编码器生成源音素 Ss，从语义解码器生成目标音素 St。此外，使用 EnCodec 编码器将 X 压缩为源声学标记 As。然后，将 Ss、St 和 As 连接起来，作为 VALL-E X 的输入，以生成目标语音的声学标记序列。使用 EnCodec 的解码器将生成的声学标记转换为最终的目标语音。
+
+# EmotiVoice
+
+**EmotiVoice**是一个强大的开源TTS引擎，完全免费，**支持中英文双语，包含2000多种不同的音色，以及特色的情感合成功能，支持合成包含快乐、兴奋、悲伤、愤怒等广泛情感的语音**。
+
+- **调速**：类OpenAI TTS的API已经支持调语速功能；
+- **定制**：用自己的数据定制音色；
+- **易用**：易魔声 HTTP API 更易上手（无需任何安装配置），更快更稳定；
+
+
+
+# GPT-SoVITS
+
+GPT-SoVITS是一个声音克隆和文本到语音转换的开源 Python RAG框架。 5秒数据就能模仿你，1分钟的声音数据就能训练出一个高质量的TTS模型，完美克隆你的声音！ 根据演示来看完美适配中文，应该是目前中文支持比较好的模型。
+
+
+
