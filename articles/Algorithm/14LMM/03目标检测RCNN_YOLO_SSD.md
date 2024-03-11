@@ -149,3 +149,20 @@ YOLO预测某个位置使用的是全图的特征，SSD预测某个位置使用�
 
 # DETR
 
+一般目标检测的任务是预测一系列的Bounding Box的坐标以及Label，而大多数检测器的具体做法是
+
+要么基于proposal，比如RCNN系列的工作，类似Faster R-CNN、Mask R-CNN
+要么基于anchor，比如YOLO
+把问题构建成为一个分类和回归问题来间接地完成这个任务，但最后都会生成很多个预测框(确定框的坐标及框内是什么物体)，从而不可避免的出现很多冗余的框，而要去除这些冗余的框，则都需要做一个NMS(non-maximum suppersion，非极大值抑制)的后处理(使得最后调参不易、部署不易)，所以如果要是有一个端对端的模型，不需要做NMS之类的后处理 也不需要太多先验知识则该有多好
+
+而通过论文《End-to-End Object Detection with Transformers》提出的DETR则满足了大家这个期待，其取代了现在的模型需要手工设计的工作，效果不错且可扩展性强(在DETR上加个专用的分割头便可以做全景分割)，其解决的方法是把检测问题看做是一个集合预测的问题(即set prediction problem，说白了，各种预测框本质就是一个集合)，其基本流程如下图所示
+![image-20240226090814547](images/image-20240226090814547.png)
+
+1、CNN抽特征且拉直
+2、全局建模，给到transformer-encoder去进一步学习全局信息
+通过借助Transformer中的的self-attention机制，可以显式地对一个序列中的所有elements两两之间的interactions进行建模或交互，如此就知道了图片中哪块是哪个物体，从而对于同一个物体只需出一个预测框即可
+3、接着通过不带掩码机制的transformer-decoder生成很多预测框
+注意是并行预测(即并行出框，而不是像原始transformer预测下一个token时一个一个往外蹦)，相当于一次性生成 N 个box prediction，其中 N是一个事先设定的远远大于image中object个数的一个整数(比如100)
+4、预测框和真实框做二分图匹配
+最后通过bipartite matching loss的方法，基于预测的100个boxex和ground truth boxes的二分图做匹配，计算loss的大小，从而使得预测的box的位置和类别更接近于ground truth。当然，这第4步更多是做模型训练的时候用，如果模型训练好了去做推理时，该第4步就不需要了，可以直接在预测的100个框中设定个阈值，比如置信度大于0.7的预测框保留下来，其他视为背景物体而 舍弃。
+
