@@ -263,3 +263,8 @@ ControlNet做了两个事情：
 上一部分描述了ControlNet如何控制单个神经网络块，论文中作者是以Stable Diffusion为例子，讲了如何使用ControlNet对大型网络进行控制。下图可以看到控制Stable Diffusion的过程就是将Encoder复制训练，decoder部分进行skip connection。
 
 ![image.png](images/d3508466e1464a4eaf5000611ad6e491_tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.webp)
+
+
+
+# SD3
+

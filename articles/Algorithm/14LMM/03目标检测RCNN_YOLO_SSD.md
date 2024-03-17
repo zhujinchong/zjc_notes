@@ -1,3 +1,5 @@
+> https://blog.csdn.net/v_july_v/article/details/80170182
+
 # 传统目标检测算法
 
 这个任务本质上就是这两个问题：一：图像识别，二：定位。
@@ -91,25 +93,26 @@ R-CNN的缺点：计算所有region进行特征提取时会有重复计算，Fas
 
 # Faster R-CNN
 
+> https://zhuanlan.zhihu.com/p/31426458
+
 Fast R-CNN存在的问题：选择性搜索，找出所有的候选框，这个也非常耗时。那我们能不能找出一个更加高效的方法来求出这些候选框呢？
 
 解决：加入一个提取边缘的神经网络Region Proposal Network(RPN)，也就说找到候选框bounding box的工作也交给神经网络来做了。同时引入anchor box应对目标形状的变化问题（anchor就是位置和大小固定的box，可以理解成事先设置好的固定大小的patch）。
 
 ![image-20240225204827682](images/image-20240225204827682.png)
 
-RPN简介： 在feature map上滑动窗口，建一个神经网络用于物体分类+框位置的回归。滑动窗口的位置提供了物体的大体位置信息，框的回归提供了框更精确的位置。我们无法固定每张图片生成的bounding box的数量。RPN通过使用固定大小的anchor（参考框）来解决这个可变长的问题。
 
-RPN：
 
-![image-20240225114758871](images/image-20240225114758871.png)
+Faster RCNN其实可以分为4个主要内容：
 
-Anchor：形状和大小怎么选？
+1. Conv layers。作为一种CNN网络目标检测方法，Faster RCNN首先使用一组基础的conv+relu+pooling层提取image的feature maps。该feature maps被共享用于后续RPN层和全连接层。(输入和输出尺寸是固定的)
+2. Region Proposal Networks。RPN网络用于生成region proposals。该层通过softmax判断anchors属于positive或者negative，再利用bounding box regression修正anchors获得精确的proposals。
+3. RoI Pooling。该层收集输入的feature maps和proposals，综合这些信息后提取proposal feature maps，送入后续全连接层判定目标类别。
+4. Classification。利用proposal feature maps计算proposal的类别，同时再次bounding box regression获得检测框最终的精确位置。
 
-anchors是一组预定义的矩形，论文中设置了3种大小，3种比例1:1,1:2,2:1，一共9个预定义的anchors。需要注意anchors是针对哪个图像设置的！例如针对检测图像（800x600）设置。在python demo中，会把任意大小的输入图像reshape成800x600，anchors中长宽1:2中最大为352x704，长宽2:1中最大736x384，基本cover了800x600的各个尺度和形状。
 
-特征图上每个像素都对应了k个anchors，会产生大量anchors。800x600经过VGG下采样16倍后有1900个像素点。feature map每个点设置9个Anchor，则一共会产生50 x 38 x 9 = 17100个anchor。后面NMS去除冗余窗口。
 
-![img](images/v2-4b15828dfee19be726835b671748cc4d_720w.webp)
+![image-20240225204843086](images/image-20240225204843086.png)
 
 一种网络，四个损失函数;
 　　• RPN calssification(anchor good.bad)：
@@ -117,7 +120,125 @@ anchors是一组预定义的矩形，论文中设置了3种大小，3种比例1:
 　　• Fast R-CNN classification(over classes)：
 　　• Fast R-CNN regression(proposal ->box)：
 
-![image-20240225204843086](images/image-20240225204843086.png)
+
+
+看下整体结构：(softmax前后有两个reshape可以忽略，这是因为caffe框架自身问题)
+
+![image-20240317125543314](images/image-20240317125543314.png)
+
+## Conv Layers
+
+在Faster RCNN Conv layers中对所有的卷积都做了扩边处理（ pad=1，即填充一圈0），导致原图变为 (M+2)x(N+2)大小，再做3x3卷积后输出MxN 。正是这种设置，导致Conv layers中的conv层不改变输入和输出矩阵大小。
+
+![image-20240317120344248](images/image-20240317120344248.png)
+
+这一步得到feature map，feautre map只是下采样，但不会改变图像宽高比。
+
+那么，一个MxN大小的矩阵经过Conv layers固定变为(M/16)x(N/16)！
+
+
+
+## Region Proposal Networks
+
+传统的滑动窗口和SS(Selective Search)方法都很耗时。
+
+Faster R-CNN做法：类似于滑动窗口，但是RPN通过使用固定大小的anchor（参考框）来生成不同尺寸的bounding box（边界框）。
+
+
+
+Anchor要做两个事情，所以，这里需要两个目标函数。
+
+1、某个框内是否含有物体（good or bad）。
+
+2、某个框是否框的准，如果框的不准我们要如何调整框（偏移量）。以前大家认为回归任务需要预测![image-20240317113443512](images/image-20240317113443512.png)，论文提出参考框这样表示![image-20240317113605821](images/image-20240317113605821.png)。所以，预测偏移量![image-20240317113633389](images/image-20240317113633389.png)，用数学语言来表示这个偏移就是ground-truth真实物体。
+
+
+
+Anchor：
+
+Anchor是一组固定的框，它们以不同的大小以及宽高比放在整个图像当中。
+
+![image-20240317114151843](images/image-20240317114151843.png)
+
+论文中设置了3种大小，3种比例1:1,1:2,2:1，一共9个预定义的anchors。需要注意anchors size是针对具体图像尺寸设置的！例如针对检测图像（800x600）设置，anchors中长宽1:2中最大为352x704，长宽2:1中最大736x384，基本cover了800x600的各个尺度和形状。
+
+
+
+计算feature map上一共多少anchor?
+
+![img](images/v2-4b15828dfee19be726835b671748cc4d_720w.webp)
+
+特征图上每个像素都对应了k个anchors，会产生大量anchors。800x600经过VGG下采样16倍后有1900个像素点。feature map每个点设置9个Anchor，则一共会产生50 x 38 x 9 = 17100个anchor。后面NMS去除冗余窗口。选取128个postive anchors+128个negative anchors进行训练。
+
+
+
+RPN后期处理：
+
+1、按照输入的positive softmax scores由大到小排序anchors，提取前n个
+
+2、限定超出图像边界的positive anchors为图像边界，防止后续roi pooling时proposal超出图像边界
+
+3、忽略掉长或者宽太小的建议框
+
+4、对剩余的positive anchors进行NMS（nonmaximum suppression）
+
+5、最后重新再按得分排序，取得分前N个框
+
+
+
+再看下RPN整体结构：（假设原图是MxN，Conv Layers下采样后是WxH）
+
+1、上面1x1x18卷积核，会把图像变成WxHx18，18是因为有9个Anchor，分类又各需要两个输出。
+
+2、下面1x1x36卷积核，会把图像变成WxHx36，36是因为有9个Anchor，回归又各需要四个输出。
+
+![image-20240317131330342](images/image-20240317131330342.png)
+
+
+
+
+
+anchor的输出
+
+![image-20240225114758871](images/image-20240225114758871.png)
+
+对于每个Proposal，我们首先使用一个3×3的卷积层，然后使用两个并行的1×1的卷积内核，k是Anchor数量，2k用于分类，4k用于回归。
+
+这里的3x3卷积是为了融合更多空间信息，这里的256只是feautre map的每个点的维度，没有什么含义。当然，最后肯定是2k和4k的输出。
+
+
+
+
+
+## RoI Pooling
+
+Rol pooling层有2个输入：
+
+1. 原始的feature maps
+2. RPN输出的proposal boxes（大小各不相同）
+
+
+
+RoI Pooling layer forward过程：
+
+我们将得到的建议框对应的feature map裁剪出来，这时候不同的建议框对应裁剪出来的feature map的尺寸是不一样的，但是我们把这些尺寸不一的feature map统一划分为7x7块，对每块使用max_pool池化，这样最终获得的feature map的尺寸就统一了。
+
+![image-20240317125306572](images/image-20240317125306572.png)
+
+
+
+
+
+## Classification
+
+从RoI Pooling获取到7x7=49大小的proposal feature maps后，送入后续网络，可以看到做了如下2件事：
+
+1. 通过全连接和softmax对proposals进行分类，这实际上已经是识别的范畴了
+2. 再次对proposals进行bounding box regression，获取更高精度的rect box
+
+![image-20240317134635248](images/image-20240317134635248.png)
+
+
 
 # YOLO
 
@@ -135,6 +256,8 @@ Faster R-CNN的方法目前是主流的目标检测方法，但是速度上并�
 
 缺点：没有了Region Proposal机制，只使用7x7的网格回归会使得目标不能非常精准的定位，这也导致了YOLO的检测精度并不是很高。
 
+
+
 # SSD
 
 YOLO缺点：没有了Region Proposal机制，只使用7x7的网格回归会使得目标不能非常精准的定位，这也导致了YOLO的检测精度并不是很高。
@@ -147,13 +270,18 @@ YOLO预测某个位置使用的是全图的特征，SSD预测某个位置使用�
 
 ![image-20240225204904971](images/image-20240225204904971.png)
 
+
+
+
+
 # DETR
 
 一般目标检测的任务是预测一系列的Bounding Box的坐标以及Label，而大多数检测器的具体做法是
 
-要么基于proposal，比如RCNN系列的工作，类似Faster R-CNN、Mask R-CNN
-要么基于anchor，比如YOLO
-把问题构建成为一个分类和回归问题来间接地完成这个任务，但最后都会生成很多个预测框(确定框的坐标及框内是什么物体)，从而不可避免的出现很多冗余的框，而要去除这些冗余的框，则都需要做一个NMS(non-maximum suppersion，非极大值抑制)的后处理(使得最后调参不易、部署不易)，所以如果要是有一个端对端的模型，不需要做NMS之类的后处理 也不需要太多先验知识则该有多好
+* 要么基于proposal，比如RCNN系列的工作，类似Faster R-CNN、Mask R-CNN
+* 要么基于anchor，比如YOLO
+
+把问题构建成为一个分类和回归问题来间接地完成这个任务，但最后都会生成很多个预测框(确定框的坐标及框内是什么物体)，从而不可避免的出现很多冗余的框，而要去除这些冗余的框，则都需要做一个NMS(non-maximum suppersion，非极大值抑制)的后处理(使得最后调参不易、部署不易)，所以如果要是有一个端对端的模型，不需要做NMS之类的后处理 也不需要太多先验知识则该有多好。
 
 而通过论文《End-to-End Object Detection with Transformers》提出的DETR则满足了大家这个期待，其取代了现在的模型需要手工设计的工作，效果不错且可扩展性强(在DETR上加个专用的分割头便可以做全景分割)，其解决的方法是把检测问题看做是一个集合预测的问题(即set prediction problem，说白了，各种预测框本质就是一个集合)，其基本流程如下图所示
 ![image-20240226090814547](images/image-20240226090814547.png)
@@ -164,5 +292,7 @@ YOLO预测某个位置使用的是全图的特征，SSD预测某个位置使用�
 3、接着通过不带掩码机制的transformer-decoder生成很多预测框
 注意是并行预测(即并行出框，而不是像原始transformer预测下一个token时一个一个往外蹦)，相当于一次性生成 N 个box prediction，其中 N是一个事先设定的远远大于image中object个数的一个整数(比如100)
 4、预测框和真实框做二分图匹配
-最后通过bipartite matching loss的方法，基于预测的100个boxex和ground truth boxes的二分图做匹配，计算loss的大小，从而使得预测的box的位置和类别更接近于ground truth。当然，这第4步更多是做模型训练的时候用，如果模型训练好了去做推理时，该第4步就不需要了，可以直接在预测的100个框中设定个阈值，比如置信度大于0.7的预测框保留下来，其他视为背景物体而 舍弃。
+最后通过bipartite matching loss的方法，基于预测的100个box和ground truth box的二分图做匹配，计算loss的大小，从而使得预测的box的位置和类别更接近于ground truth。当然，这第4步更多是做模型训练的时候用，如果模型训练好了去做推理时，该第4步就不需要了，可以直接在预测的100个框中设定个阈值，比如置信度大于0.7的预测框保留下来，其他视为背景物体而 舍弃。
+
+
 
