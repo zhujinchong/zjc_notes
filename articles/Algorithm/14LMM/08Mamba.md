@@ -1,4 +1,6 @@
-[UCLA华人提出全新自我对弈机制！LLM自己训自己，效果碾压GPT-4专家指导 (qq.com)](https://mp.weixin.qq.com/s/ORZCxa97y-Hn8yme97eBTA)
+# Mamba
+
+UCLA华人提出全新自我对弈机制！LLM自己训自己，效果碾压GPT-4专家指导 (qq.com)](https://mp.weixin.qq.com/s/ORZCxa97y-Hn8yme97eBTA)
 
 
 
@@ -28,6 +30,8 @@ Mamba: Linear-Time Sequence Modeling with Selective State Spaces
 
 
 
+# Jamba
 
 
-![image-20240317205517236](images/image-20240317205517236.png)
+
+https://mp.weixin.qq.com/s/lCUr6qN1SkyRJTZWI9Jtvg
