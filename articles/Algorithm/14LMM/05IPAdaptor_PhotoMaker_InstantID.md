@@ -194,5 +194,7 @@ PhotoMaker 主要通过将任意数量的输入图像编码成堆叠的ID嵌入�
 
 3、`IdentityNet`：`IdentityNet`的核心目的是给`diffusion model`增加spatial control的能力,来弥补损害的text edit能力。作者采用`Controlnet`的思路来实现`IdentityNet`。
 
+# FlashFace
+
 
 
