@@ -1125,3 +1125,103 @@ docker-compose stop      # 停止服务
 }
 ```
 
+# 非root用户运行docker
+
+一般情况下，只有 root 用户和属于 docker 用户组的用户才被允许访问 Docker 守护进程。在 Linux 系统上使用 Docker 时，如果您尚未配置 docker 用户组，那么作为非 root 用户执行 Docker 相关命令将要求使用 sudo 来提升权限。
+
+查看是否存在 docker 用户组：
+
+```
+getent group docker
+```
+
+如果不存在，则使用以下命令创建docker用户组
+
+```
+groupadd docker
+```
+
+将该用户添加到 docker 用户组
+
+```
+usermod -aG docker your_username
+```
+
+为了使更改生效，使用以下命令更新用户组。
+
+```
+newgrp docker
+```
+
+重启docker
+
+```
+systemctl restart docker
+```
+
+
+
+
+
+
+
+如果您要在服务器上取消sudo 密码，请注意，取消 sudo 密码要求需要谨慎操作，确保只授予必要的用户这一权限，以维护系统的安全性。
+
+编辑
+
+```
+vim /etc/sudoers
+```
+
+添加
+
+```
+your_username ALL=(ALL) NOPASSWD : ALL
+```
+
+
+
+# Docker重启不影响容器运行
+
+想重启下dockerd进程，但是不影响容器的运行.（类似nginx -s reload）
+
+/etc/docker/daemon.json配置文件中设置了 （这里是默认的，不用修改）
+
+```
+{
+  "live-restore": true
+}
+```
+
+重启
+
+```
+systemctl restart docker
+```
+
+
+
+# 主机重启Docker和容器自动重启
+
+1、docker开机启动
+
+```
+systemctl enable docker
+```
+
+2、容器自动重启
+
+2.1、创建容器时
+
+```
+docker run -d --restart=always
+```
+
+2.2、修改已有容器
+
+```
+docker update --restart=always 容器ID(或者容器名)
+```
+
+
+
