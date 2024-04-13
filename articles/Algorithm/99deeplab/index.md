@@ -12,9 +12,27 @@ whisper
 
 # 声音克隆
 
-文字到声音（英文）：xtts_v2, EmotiVoice
+Wisper：多语言语音转文字。
 
-音色克隆：so-vits-svc、rvc, VALL-E X, GPT-Sovits
+VALL-E X：微软不开源，已有开源实现，支持中英文TTS，支持克隆，但效果不好。
+
+XTTS-V2：支持中英文TTS，支持克隆，英文克隆效果很好，中文一般。
+
+EmotiVoice：支持中英文TTS，不支持克隆，有多个Speaker。
+
+GPT-Sovits：支持中英文TTS，不支持克隆，微调中文效果可以，但是不能中英混合着说。
+
+OpenVoice：支持中英文TTS，支持克隆，实验中。
+
+MeloTTS：支持中英文TTS，不支持克隆，Speaker支持一个。。
+
+VoiceCraft：英文TTS，支持克隆，目前还不支持中文。
+
+VoiceEngine：OpenAI不开源。
+
+NatureSpeech3：微软不开源。
+
+Parler TTS：（是否支持中文，未知）英文TTS，不支持克隆，可以通过语言描述控制声音特征。
 
 # 嘴型对齐
 
