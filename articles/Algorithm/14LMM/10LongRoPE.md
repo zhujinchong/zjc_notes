@@ -1,8 +1,22 @@
-[微软这篇论文把LLM的上下文扩展到了200万tokens (qq.com)](https://mp.weixin.qq.com/s/9mcccgEICn-jU6Xl4vFltg)
+# LongRoPE
+
+论文：LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens
+
+时间：202402
+
+机构：微软
 
 
 
+LongRoPE能够在仅需最多1000步的微调内，即可完成从短上下文到长上下文的扩展。同时还能保持原有短上下文窗口的性能。
+
+三大关键创新：
+
+△ 非均匀位置插值：通过识别和利用位置插值中的两种非均匀性，LongRoPE为微调提供了更好的初始化，允许在无需微调的场景下实现8倍的扩展。
+
+△ 渐进式扩展策略：采用先微调一个256k长度LLM，然后进行第二次位置插值以达到2048k上下文窗口的策略，避免了直接在极长文本上微调的需要。
+
+△ 调整性能以恢复短上下文窗口性能：通过在扩展LLM上调整RoPE重缩放因子，缓解了原始（较短）上下文窗口性能下降的问题。
 
 
-LWM
 

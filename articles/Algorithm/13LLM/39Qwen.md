@@ -250,5 +250,9 @@ Window attention，将注意力限制在一个上下文窗口内，防止模型�
 
 论文：Overcoming a theoretical limitation of self-attention
 
-参考：https://zhuanlan.zhihu.com/p/673851074
+![image-20240413232410279](images/image-20240413232410279.png)
+
+在计算attention时，引入一个缩放因子logn，有助于泛化长度。
+
+这里的logn不合理，参考：https://spaces.ac.cn/archives/8823
 

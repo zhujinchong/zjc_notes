@@ -101,13 +101,9 @@ Swin Transformer: Hierarchical Vision Transformer using Shifted Windows
 
 swin transformer作为多尺度的ViT更加适合处理视觉问题，且证明transformer不但能在ViT所证明的分类任务上取得很好的效果，在检测、分割上也能取得很好的效果，而在结构上，swin transformer主要做了以下两点改进
 
-1、获取图像多尺寸的特征
+1、获取图像多尺寸的特征。ViT都是16x16的patch，多尺寸的特征也很重要。
 
-ViT都是16x16的patch，多尺寸的特征也很重要。
-
-2、降低序列长度是图像处理中一个很关键的问题，虽然ViT把整张图片打成了16x16的patch，但图像比较大的时候，计算的复杂度还是比较高。
-
-而Swin Transformer使用窗口Window的形式将16x16的特征图划分成了多个不相交的区域(比如16个4x4的，4个8x8的)，并且只在每个小窗口(4x4或8x8)内进行多头注意力计算，大大减少计算量。之所以能这样操作的依据在于借鉴了CNN中locality先验知识。
+2、降低序列长度是图像处理中一个很关键的问题，虽然ViT把整张图片打成了16x16的patch，但图像比较大的时候，计算的复杂度还是比较高。而Swin Transformer使用窗口Window的形式将16x16的特征图划分成了多个不相交的区域(比如16个4x4的，4个8x8的)，并且只在每个小窗口(4x4或8x8)内进行多头注意力计算，大大减少计算量。之所以能这样操作的依据在于借鉴了CNN中locality先验知识。
 
 
 
@@ -118,6 +114,28 @@ ViT都是16x16的patch，多尺寸的特征也很重要。
 然后就是通过四个Stage构建不同大小的特征图，除了Stage1中先通过一个Linear Embeding层外，剩下三个stage都是先通过一个Patch Merging层进行下采样。然后都是重复堆叠Swin Transformer Block注意这里的Block其实有两种结构，如图(b)中所示，这两种结构的不同之处仅在于一个使用了W-MSA结构，一个使用了SW-MSA结构。而且这两个结构是成对使用的，先使用一个W-MSA结构再使用一个SW-MSA结构。所以你会发现堆叠Swin Transformer Block的次数都是偶数（因为成对使用）。
 
 最后对于分类网络，后面还会接上一个Layer Norm层、全局池化层以及全连接层得到最终输出。图中没有画，但源码中是这样做的。
+
+## Patch Merging
+
+![image-20240414175122467](images/image-20240414175122467.png)
+
+## W-MSA
+
+Windows Multi-head Self-Attention（W-MSA）模块是为了减少计算量。首先将feature map按照MxM（例子中的M=2）大小划分成一个个Windows，然后单独对每个Windows内部进行Self-Attention。
+
+![image-20240414175506707](images/image-20240414175506707.png)
+
+## SW-MSA
+
+采用W-MSA模块时，只会在每个窗口内进行自注意力计算，所以窗口与窗口之间是无法进行信息传递的。为了解决这个问题，作者引入了Shifted Windows Multi-Head Self-Attention（SW-MSA）模块，即进行偏移的W-MSA。
+
+窗口向右、向下移动1/2：
+
+![image-20240414175743500](images/image-20240414175743500.png)
+
+根据上图，可以发现通过将窗口进行偏移后，由原来的4个窗口变成9个窗口了。后面又要对每个窗口内部进行MSA，这样做感觉又变麻烦了。为了解决这个麻烦，作者又提出而了Efficient batch computation for shifted configuration，一种更加高效的计算方法。
+
+![image-20240414180039207](images/image-20240414180039207.png)
 
 
 # DiT
@@ -158,3 +176,4 @@ Patchify层：将图像切分成多个大小为p x p的patches，并转换为长
 - adaLN-Zero：采用zero初始化的adaLN，这里是将adaLN的linear层参数初始化为zero，这样网络初始化时transformer block的残差模块就是一个identity函数；另外一点是，这里除了在LN之后回归scale和shift，还在每个残差模块结束之前回归一个scale，如上图所示。
 
 最有效的是adaLN-Zero。
+
