@@ -1,5 +1,45 @@
 ![img](images/v2-a2c95e4dda40410872aba8ef15e4fff8_720w.webp)
 
+# I-JEPA
+
+时间：2023-01
+
+论文：Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture
+
+
+
+## 思想
+
+计算机视觉中的自监督学习方法包括**基于不变性的方法**和**生成式方法**。invariance-based methods 和 generative methods：
+
+- 对比学习（CL）是典型的基于不变性的方法，通过优化编码器，使其生成同一图像的多个增强视图的相似嵌入。尽管基于不变性的预训练方法可以生成高语义级别的表示，但其**特定于手工设计的数据增强方法引入的偏置**，和**特定于图像的增强技术**限制了它们在不同任务和其他模态下的推广能力。
+- 在本研究中，将掩蔽图像建模（MIM）归为生成式方法，通过从输入中重构随机破坏（掩蔽、加噪等）的 patches 来学习表示，可以在像素级别或 token 级别上进行。尽管生成式预训练方法在**先验知识需求**上和**跨模态应用方面**具有优势，但由此产生的表示往往**具有较低的语义级别**，并且在某些评估（线性探测）和迁移（语义分类任务）设置中表现不如基于不变性的预训练方法。
+
+如何提高自监督表示的语义级别，而不依赖于通过图像变换编码的额外先验知识呢？
+
+作者首先使用**能量模型（Energy-Based Models，EBMs）**来描述这两种自监督学习的目标。能量函数通常写作![image-20240418174809244](images/image-20240418174809244.png)，用于衡量输入对 x，y 的 compatibility，也可以理解为 x, y是否匹配，能量越小匹配度越高。自监督学习的目标是给不匹配的输入对分配高能量，并给匹配输入对分配低能量。
+
+- 如 CL 等基于不变性的方法可以使用图 1a 所示的**联合嵌入架构（Joint-Embedding Architectures，JEA）**来描述。CL 通过为同一输入图像随机应用手工设计的数据增强方法来构建x, y对，再通过能量函数学习为匹配的输入对输出相似的嵌入，对不匹配的输入对输出不相似的嵌入。
+- 而 MIM 等生成式方式可以使用图 1b 所示的**生成式架构（Generative Architectures）**来描述。MIM 使用掩码（masking）来生成匹配的x, y对，其中 x 是输入图像 y 的掩蔽视图。额外的条件变量 z 对应于一组掩码和位置 tokens，用于指示解码器直接重建匹配信号 y  。
+
+结合上述两种自监督学习方法的缺陷，本文在两种架构的基础上提出了**联合嵌入预测架构（Joint-Embedding Predictive Architecture，JEPA）**，如图 1c 所示。
+
+与 Generative Architectures 在概念上类似，但关键区别在于损失函数应用于嵌入空间而不是输入空间。JEPA 通过一个额外的条件变量 z ，使用预测器网络预测匹配信号 y 的嵌入。与 JEA 不同，JEPA 不寻求对一组手工设计的数据增强不变的表示，而是在额外的条件变量 z 下寻求彼此预测的表示。
+
+![image-20240418174850256](images/image-20240418174850256.png)
+
+
+
+## 方法
+
+作者提出的**基于图像的联合嵌入预测架构（Image-based JointEmbedding Predictive Architecture，I-JEPA）**如图 2 所示，通过给定的一个 context block，预测同一图像中各种 target blocks 的表示。与 MAE 的区别在于 I-JEPA 的预测是在表示空间中进行的，所以它是非生成式的。
+
+具体来说，基于图像的联合嵌入预测体系结构使用单个 context block 来预测来自同一图像的不同 target block 的表示。context 编码器是一个 ViT，它只处理可见的 context patches。预测器是一个 tiny ViT，它接收 context 编码器的输出，并根据位置 tokens（以颜色显示）预测 target block 在特定位置的表示。target 表示是 target 编码器的输出，其权重在每次迭代中通过 context 编码器权重的指数移动平均更新。
+
+![image-20240418175629777](images/image-20240418175629777.png)
+
+
+
 # BLIP
 
 **BLIP**(Bootstrapping Language-Image Pretraining)是**salesforce**在2022年提出的多模态框架，是理解和生成的统一，引入了跨模态的编码器和解码器，实现了跨模态信息流动，在多项视觉和语言任务取得SOTA。
@@ -255,7 +295,7 @@ GPU里面的存储有个层次结构。
 
 
 
-# I-JEPA
+
 
 # V-JEPA
 
@@ -310,6 +350,8 @@ Mini-Gemini 将传统所使用的 ViT 当做低分辨率的 Query，而使用卷
 ![image-20240416095213642](images/image-20240416095213642.png)
 
 
+
+# LLama3
 
 
 

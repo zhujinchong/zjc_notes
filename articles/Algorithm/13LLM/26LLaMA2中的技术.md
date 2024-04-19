@@ -349,7 +349,7 @@ Decoder  每次前向，当前 timestep 计算 Attention 要用到的部分，�
 
 
 
-# 附：PoPE
+# 附：RoPE
 
 > RoPE是目前唯一一种可以用于线性Attention的相对位置编码。
 
