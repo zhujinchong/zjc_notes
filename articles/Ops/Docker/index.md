@@ -1225,3 +1225,13 @@ docker update --restart=always 容器ID(或者容器名)
 
 
 
+# docker镜像
+
+```
+"https://docker.m.daocloud.io",
+"https://huecker.io",
+"https://dockerhub.timeweb.cloud",
+"https://noohub.ru",
+"https://dockerhub.icu",
+```
+

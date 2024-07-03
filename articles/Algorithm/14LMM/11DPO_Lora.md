@@ -46,3 +46,13 @@ DPO依赖于理论上的偏好模型，如Bradley-Terry模型，来测量奖励�
 
 
 
+步骤：
+
+步骤1）是在构造数据集，通过对同一问题的两种回复的倾向性：chosen or rejected，反映人类偏好。
+
+步骤2）在于优化，具体过程大概是，对于同一个question prompt，模型在两种模型：language/policy model 和 reference model下分别生成，对应chosen 和 rejected label真值标签的生成概率，因此可以获得四种概率值：policy_chosen_logps, policy_rejected_logps, reference_chosen_logps, reference_rejected_logps, 用于DPO loss计算。
+
+
+
+
+
