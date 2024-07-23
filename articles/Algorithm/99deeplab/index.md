@@ -34,6 +34,8 @@ NatureSpeech3：微软不开源。
 
 Parler TTS：（是否支持中文，未知）英文TTS，不支持克隆，可以通过语言描述控制声音特征。
 
+ChatTTS: 开源，控制语调，多个说话人。
+
 # 嘴型对齐
 
 生成符合音频的嘴型视频：GeneFace++, wav2lip, VideoReTalking, SadTalker
@@ -53,6 +55,8 @@ HeyGan: 图片变视频+声音克隆+口型对齐
 Runway: 图片生成视频
 
 PIKA：图片生成视频
+
+AnimateDiff
 
 
 
