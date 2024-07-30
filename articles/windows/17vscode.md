@@ -35,25 +35,71 @@ User版本权限不足，无法在系统分区创建安装目录，一般选Syst
 
 ```
 {
+    // ==========================================全局设置========================================================
     // 字体大小
     "editor.fontSize": 16,
     // 失去焦点时，自动保存
     "files.autoSave": "onFocusChange",
     // 当前行代码高亮显示
     "workbench.colorCustomizations": {
-        "editor.lineHighlightBackground":"#00000090",
-        "editor.lineHighlightBorder":"#ffffff30"
+        "editor.lineHighlightBackground": "#00000090",
+        "editor.lineHighlightBorder": "#ffffff30"
     },
+    "terminal.integrated.cursorBlinking": true,
     // 打开文件夹时，开启一个新的窗口
     "window.openFoldersInNewWindow": "on",
     // 打开文件时，开启一个新的窗口
     "window.openFilesInNewWindow": "on",
-    // 选中文本中搜索
-    "editor.find.autoFindInSelection": "always",
+    // 当选中多行文本时，自动打开在选中文本中搜索
+    "editor.find.autoFindInSelection": "multiline",
+    // 缩略图 关闭
+    "editor.minimap.enabled": false,
+
+    // ==========================================Python代码设置========================================================
     // 代码格式化
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
+    // 加入项目根路径，解决Python项目问题: No module named 'xxx'
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${workspaceFolder}"
+    },
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "${workspaceFolder}"
+    },
+    "terminal.integrated.env.osx": {
+        "PYTHONPATH": "${workspaceFolder}"
+    },
+    // Python执行目录（解决路径找不到问题）
+    "python.terminal.executeInFileDir": true,
+
+    // ==========================================Markdown设置========================================================
+    // Markdown All in One插件：图片粘贴时存放路径
+    "markdown.copyFiles.destination": {
+        "**/*": "images/${documentBaseName}/"
+    },
+    // Markdown 这里Office Viewer插件自动设置的，意思是不要使用默认default编辑器
+    "workbench.editorAssociations": {
+        "{git,gitlens}:/**/*.{md,csv,svg}": "default"
+    },
+    // Office Viewer (Markdown Editor)插件：图片粘贴时存放路径
+    "vscode-office.pasterImgPath": "images/${fileName}/${now}.png",
+
+    // ==========================================主题设置========================================================
+    // 主题插件：One Dark Pro
+    "workbench.colorTheme": "One Dark Pro",
+  
+    // ==========================================Draw.io========================================================
+    // Draw.io主题设置
+    "hediet.vscode-drawio.theme": "min",
+
+    // ==========================================Code Runner ========================================================
+    // 运行
+    "code-runner.clearPreviousOutput": false,
+
+    // ==========================================Git Runner ========================================================
+    "git.enableSmartCommit": true,
+    "git.confirmSync": false
 }
 ```
 
