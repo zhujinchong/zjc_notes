@@ -339,3 +339,5 @@ python -m  pip install --upgrade pip
 参考：[最香远程开发解决方案！手把手教你配置VS Code远程开发工具，工作效率提升N倍 - 程序员柠檬 - 博客园 (cnblogs.com)](https://www.cnblogs.com/NanoDragon/p/12899430.html)
 
 原来，VSCode需要远程电脑安装一个VS Code Server，如果离线环境，需要准备好这些资料。
+
+参考：[vscode remote ssh离线安装（2024.4）_vscode-server-linux-CSDN博客](https://blog.csdn.net/corey_li/article/details/137814312)
