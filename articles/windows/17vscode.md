@@ -298,3 +298,44 @@ FileNotFoundError: [Errno 2] No such file or directory: 'test.json'
 ```
 
 在进行Debugger正常。
+
+## conda找不到包
+
+问题：选择了conda虚拟环境，但是运行时找不到安装包
+
+原因：正常的conda虚拟环境路径如下：
+
+![1722942931748](images/17vscode/1722942931748.png)
+
+需要在~/.condarc中显示定义虚拟环境位置，如：
+
+```
+envs_dirs:
+  - D:\Anaconda3\envs
+pkgs_dirs:
+  - D:\Anaconda3\pkgs
+```
+
+不对，还是不行。
+
+终于找到原因，原来是pip命令出了问题
+
+```
+pip -V
+```
+
+发现pip命令不在envs之下。
+
+更新pip
+
+```
+python -m  pip install --upgrade pip
+```
+
+## 远程开发
+
+参考：[远程开发方式整合（vscode以及pycharm的两种方式）-CSDN博客](https://blog.csdn.net/weixin_43216249/article/details/123378998)
+
+参考：[最香远程开发解决方案！手把手教你配置VS Code远程开发工具，工作效率提升N倍 - 程序员柠檬 - 博客园 (cnblogs.com)](https://www.cnblogs.com/NanoDragon/p/12899430.html)
+
+原来，VSCode需要远程电脑安装一个VS Code Server，如果离线环境，需要准备好这些资料。
