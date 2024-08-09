@@ -341,3 +341,15 @@ python -m  pip install --upgrade pip
 原来，VSCode需要远程电脑安装一个VS Code Server，如果离线环境，需要准备好这些资料。
 
 参考：[vscode remote ssh离线安装（2024.4）_vscode-server-linux-CSDN博客](https://blog.csdn.net/corey_li/article/details/137814312)
+
+## Click go to definition
+
+或者是这类问题：How to see the source code inside the library when doing ctrl+click(go to definition) in vscode (python)
+
+1、先检查有没有安装Pylance插件。
+
+2、重启VSCode；
+
+3、禁用Pylance，重启VSCode，启动Pylance。
+
+总之，就是Pylance没有起作用。
